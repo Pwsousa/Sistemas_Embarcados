@@ -42,16 +42,8 @@ int main(){
     while (true){
         if(!gpio_get(BUTTON_PIN_A)){
             gpio_put(PIN_LED_A,1);
-            gpio_put(BUZZER_PIN_A,1);
-        }
 
-        else if (!gpio_get(BUTTON_PIN_B)){
-            gpio_put(PIN_LED_A,0);
-            gpio_put(BUZZER_PIN_A,0);
         }
-
-        
-        
     }
     
 }

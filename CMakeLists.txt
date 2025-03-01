@@ -56,6 +56,9 @@ target_include_directories(Sistemas_Embarcados PRIVATE
 # Add any user requested libraries
 target_link_libraries(Sistemas_Embarcados 
         hardware_gpio
+        hardware_adc
+        hardware_pwm
+        pico_stdlib
         )
 
 pico_add_extra_outputs(Sistemas_Embarcados)

@@ -59,6 +59,7 @@ target_link_libraries(Sistemas_Embarcados
         hardware_adc
         hardware_pwm
         pico_stdlib
+        hardware_timer
         )
 
 pico_add_extra_outputs(Sistemas_Embarcados)

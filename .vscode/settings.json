@@ -39,6 +39,7 @@
     "files.associations": {
         "gpio.h": "c",
         "adc.h": "c",
-        "stdlib.h": "c"
+        "stdlib.h": "c",
+        "timer.h": "c"
     }
 }

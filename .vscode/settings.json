@@ -40,6 +40,7 @@
         "gpio.h": "c",
         "adc.h": "c",
         "stdlib.h": "c",
-        "timer.h": "c"
+        "timer.h": "c",
+        "play_audio.h": "c"
     }
 }

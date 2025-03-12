@@ -55,7 +55,19 @@ typedef enum{
     OK = 0x00,
     ERROR = 0x01
 }ssd_1306_erro;
+
+typedef struct {
+    uint8_t x;
+    uint8_t y;
+} ssd_1306_verti;
+
 /******************** Cabeçalhos das funções ********************/
+
+void ssd_1306_reset(void);
+ssd_1306_erro ssd_1306_fill_buffer(uint8_t *, uint8_t);
+void ssd_1306_write_data(uint8_t *buff, size_t buff_size);
+
+void ssd_1306_fill(ssd_1306_color color);
 
 void ssd_1306_init(void);
 void ssd_1306_up_date_screen(void);

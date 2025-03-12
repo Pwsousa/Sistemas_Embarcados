@@ -1,6 +1,6 @@
 - [Introdução](#-introdução)
 - [Motivo](#-motivo)
-- [Caracteristicas & Capacidades](#-caracteristicas--capacidades)
+- [Principais caracteristicas](#-caracteristicas--capacidades)
 - [Instalação](#-instalacao)
 - [Quick Start](#-quick-start)
 - [Exemplos](#-exemplos)
@@ -39,7 +39,46 @@ A *Raspberry Pi Pico* suporta a linguagem *C* e a *MicroPython*, o presente cód
 - *Facilitar a integração dos perifericos com o microcontrolador*
 - *
 
-## ✨ Caracteristicas & Capacidades
+## ✨ Principais caracteristicas - OLED
+
+### Inicialização
+-`ssd1306_Init()` : Cria a lista de comandos (com base nos endereços definidos em ssd1306_i2c.h) para a inicialização do display.
+
+### Controle do display
+
+-`render_on_display()`: Atualiza uma parte do display com uma área de renderização
+-`ssd1306_set_pixel()`: Determina o pixel a ser aceso (no display) de acordo com a coordenada fornecida
+-` 
+
+### Desenho de formas 
+
+-`ssd1306_draw_line()`: Com o algoritmo de Bresenham básico desenha uma linha 
+-`ssd1306_draw_bitmap()`: Desenha o bitmap (a ser fornecido em display_oled.c) no display.
+
+### Envio e manipulação de textos
+
+-`ssd1306_draw_char()`: Desenha um único caractere no display.
+-`ssd1306_draw_string()`:Desenha uma string, chamando a função de desenhar caractere várias vezes.
+
+### Manipulação do buffer
+
+-`calculate_render_area_buffer_length()`:Calcular quanto do buffer será destinado à área de renderização.
+-`
+
+### Funções de baixo nível
+-`ssd1306_send_command()`: Processo de escrita do i2c espera um byte de controle, seguido por dados.
+
+-`ssd1306_config()`: Função de configuração do display para o caso do bitmap
+
+-`ssd1306_init_bm()`: Inicializa o display para o caso de exibição de bitmap
+
+-`ssd1306_send_command_list()`: Envia uma lista de comandos ao hardware.
+
+-`ssd1306_send_buffer()`: Copia buffer de referência num novo buffer, a fim de adicionar o byte de controle desde o início.
+
+-`ssd1306_scroll()`: Cria a lista de comandos para configurar o scrolling.
+
+-`ssd1306_send_data()`: Envia os dados ao display.
 
 ## 🔧 Instalação
 

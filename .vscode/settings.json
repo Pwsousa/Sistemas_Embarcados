@@ -41,6 +41,10 @@
         "adc.h": "c",
         "stdlib.h": "c",
         "timer.h": "c",
-        "play_audio.h": "c"
+        "play_audio.h": "c",
+        "binary_info.h": "c",
+        "i2c.h": "c",
+        "ssd1306.h": "c",
+        "ssd1306_i2c.h": "c"
     }
 }

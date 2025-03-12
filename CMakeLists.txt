@@ -58,6 +58,7 @@ target_link_libraries(Sistemas_Embarcados
         hardware_gpio
         hardware_adc
         hardware_pwm
+        hardware_i2c
         pico_stdlib
         hardware_timer
         )

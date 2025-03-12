@@ -23,7 +23,7 @@ if (EXISTS ${picoVscode})
     include(${picoVscode})
 endif()
 # ====================================================================================
-set(PICO_BOARD pico_w CACHE STRING "Board type")
+set(PICO_BOARD pico_w CACHE STRING "pico_w")
 
 # Pull in Raspberry Pi Pico SDK (must be before project)
 include(pico_sdk_import.cmake)
@@ -35,7 +35,12 @@ pico_sdk_init()
 
 # Add executable. Default name is the project name, version 0.1
 
-add_executable(Sistemas_Embarcados Sistemas_Embarcados.c )
+add_executable(
+    Sistemas_Embarcados 
+    display/ssd1306_i2c.c
+    display/ssd1306.c
+    Sistemas_Embarcados.c 
+)
 
 pico_set_program_name(Sistemas_Embarcados "Sistemas_Embarcados")
 pico_set_program_version(Sistemas_Embarcados "0.1")

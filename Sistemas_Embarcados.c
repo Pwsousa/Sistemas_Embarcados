@@ -4,7 +4,7 @@
 #include <ctype.h>
 #include "pico/stdlib.h"
 #include "pico/binary_info.h"
-#include "ssd1306_i2c.c"
+#include "display/ssd1306_i2c.h"
 #include "hardware/i2c.h"
 
 const uint I2C_SDA = 14;

@@ -38,6 +38,7 @@ pico_sdk_init()
 add_executable(
     main 
     src/ssd_1306.c
+    src/ssd_1306_font.c
     main.c 
 )
 

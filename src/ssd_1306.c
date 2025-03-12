@@ -1,10 +1,20 @@
 /************************* includes *************************/
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include "pico/stdlib.h"
+#include "pico/binary_info.h"
+#include "hardware/i2c.h"
+#include "math.h"
+
 #include "ssd_1306.h"
 
 /************************* variaveis *************************/
 static uint8_t buffer[SSD1306_BUFFER_SIZE];
 static ssd_1306_t ssd_1306;
 /************************* Funcoes *************************/
+
 /**
  * @
  */
@@ -17,6 +27,7 @@ void ssd_1306_reset(void){
 /**
  * @param byte 8 bits a ser enviado
  * @return Nao retorna nada
+ * @note Envia um byte para o registrador 
  */
 void ssd_1306_write_command(uint8_t byte){
 
@@ -28,26 +39,11 @@ void ssd_1306_write_command(uint8_t byte){
 }
 
 /**
- * @param buff 
- * @param _len
- * @return
- * Retorna Ok ou ERROR
- */
-ssd_1306_erro ssd_1306_fill_buffer(uint8_t *buff, uint8_t _len){
-    
-    if(_len <= SSD1306_BUFFER_SIZE){
-        memcpy(buffer, buff, _len);
-        return OK;
-    }
-    return ERROR;
-}
-
-/**
  * @author Lucas Guilherme
  * @param buff
  * @param buff_size
- * @return
- * Sem retorno
+ * @return void 
+ * @note Envia os dados 
  */
 void ssd_1306_write_data(uint8_t *buff, size_t buff_size){
 
@@ -60,7 +56,23 @@ void ssd_1306_write_data(uint8_t *buff, size_t buff_size){
 }
 
 /**
- *@param void sem parametro
+ * @param buff 
+ * @param _len
+ * @return Retorna Ok ou ERROR 
+ * @note
+ */
+ssd_1306_erro ssd_1306_fill_buffer(uint8_t *buff, uint8_t _len){
+    
+    if(_len <= SSD1306_BUFFER_SIZE){
+        memcpy(buffer, buff, _len);
+        return OK;
+    }
+    return ERROR;
+}
+
+/**
+ * @param void void
+ * @return void
  */
 void ssd_1306_init(void){
 
@@ -173,9 +185,8 @@ void ssd_1306_init(void){
 }
 
 /**
- * @author Lucas Guilherme
- * @param ssd_1306_color
- * @details Preenche o buffer com a cor especificada
+ * @param ssd_1306_color color
+ * @note Preenche o buffer com a cor especificada
  */
 void ssd_1306_fill(ssd_1306_color color){
 
@@ -186,9 +197,27 @@ void ssd_1306_fill(ssd_1306_color color){
  * @author Lucas Guilherme
  * @param void
  * @return uint8_t
+ * @note
  */
 uint8_t ssd_1306_get_display_on(void){
     return ssd_1306.display_on;
+}
+
+/**
+ * @param void
+ * @return void
+ * @note Write data to each page of RAM. Number of pages depends on the screen height:
+ * 32px == 4 ppages
+ * 64px == 8 pages
+ * 128px == 16 page
+ */
+void ssd_1306_up_date_screen(void){
+
+    for(uint8_t i = 0; i<SSD1306_HEIGHT/8; i++){
+        ssd_1306_write_command(0xB0 + i);
+        ssd_1306_write_command(0x00 + SSD1306_X_OFFSET_LOWER);
+        ssd_1306_write_command(0x10 + SSD1306_X_OFFSET_UPPER);
+    }
 }
 
 /**
@@ -275,6 +304,7 @@ void ssd_1306_draw_polyline(ssd_1306_verti *verte, uint16_t size, ssd_1306_color
  * @note Draw line by Bresenhem's algorithm 
  */
 void ssd_1306_draw_line(uint8_t x_1, uint8_t y_1, uint8_t x_0, uint8_t y_0, ssd_1306_color color){
+    
     int delt_x = abs(x_1 - x_0);
     int delt_y = abs(y_1 - y_0);
 
@@ -310,7 +340,7 @@ void ssd_1306_draw_line(uint8_t x_1, uint8_t y_1, uint8_t x_0, uint8_t y_0, ssd_
         }
     }
 
-    return 0;
+    return;
 }
 
 /**
@@ -338,8 +368,40 @@ void ssd_1306_draw_rectangle(uint8_t x_0, uint8_t y_0, uint8_t x_1, uint8_t y_1,
  * @return OK ou ERROR
  */
 ssd_1306_erro ssd_1306_inverte_retangulo(uint8_t x_0, uint8_t y_0, uint8_t x_1, uint8_t y_1){
+   
+    // Verifica limites de tela
+    if ((x_1 >= SSD1306_WIDTH) || (y_1 >= SSD1306_HEIGHT) || (x_0 > x_1) || (y_0 > y_1)) {
+      return ERROR;
+    }
+  
+    // Inicializa a variável de índice
+    uint32_t i;
+  
+    // Verifica se o retângulo não está em uma única linha de 8 pixels
+    if ((y_0 / 8) != (y_1 / 8)) {
+      for (uint32_t x = x_0; x <= x_1; x++) {
+        // Inverte bits na linha inicial parcial
+        i = x + (y_0 / 8) * SSD1306_WIDTH;
+        buffer[i] ^= 0xFF << (y_0 % 8);
+        i += SSD1306_WIDTH;
+  
+        // Inverte bits nas linhas intermediárias completas
+        for (; i < x + (y_1 / 8) * SSD1306_WIDTH; i += SSD1306_WIDTH)
+            buffer[i] ^= 0xFF;
+        
+        // Inverte bits na linha final parcial
+        buffer[i] ^= 0xFF >> (7 - (y_1 % 8));
+      }
 
-}
+    } else {
+      // Se o retângulo está em uma única linha de 8 pixels
+      const uint8_t mask = (0xFF << (y_0 % 8)) & (0xFF >> (7 - (y_1 % 8)));
+      for (i = x_0 + (y_0 / 8) * SSD1306_WIDTH; i <= (uint32_t)x_1 + (y_1 / 8) * SSD1306_WIDTH; i++) {
+        buffer[i] ^= mask;
+      }
+    }
+    return OK;
+  }
 
 /**
  * @author Lucas Guilherme
@@ -370,7 +432,10 @@ void ssd_1306_fill_rectangle(uint8_t x_0, uint8_t y_0, uint8_t x_1, uint8_t y_1,
 }
 
 /**
- * @
+ * @param uint8_t x 
+ * @param uint8_t y
+ * @return void
+ * @note Position the cursor 
  */
 void ssd_1306_set_cursor(uint8_t x, uint8_t y){
     ssd_1306.corde_x = x;
@@ -378,7 +443,11 @@ void ssd_1306_set_cursor(uint8_t x, uint8_t y){
 }
 
 /**
- * @
+ * @param char *str
+ * @param ssd_1306_font font
+ * @param ssd_1306_color color
+ * @return char 
+ * @note
  */
 char ssd_1306_write_string(char *str, ssd_1306_font font, ssd_1306_color color){
     while(*str){
@@ -391,7 +460,11 @@ char ssd_1306_write_string(char *str, ssd_1306_font font, ssd_1306_color color){
 }
 
 /**
- * @
+ * @param char _char_
+ * @param ssd_1306_font font
+ * @param ssd_1306_color color
+ * @return cahr 
+ * @note 
  */
 char ssd_1306_write_char(char _char_, ssd_1306_font font, ssd_1306_color color){
     if(_char_ < 32 || _char_ > 126)
@@ -415,9 +488,13 @@ char ssd_1306_write_char(char _char_, ssd_1306_font font, ssd_1306_color color){
 }
 
 /**
- * @details Desenha um pixel na tela em coordenadas especificadas
+ * @param uint8_t x
+ * @param uint8_t y
+ * @param ssd_1306_color color
+ * @note Desenha um pixel na tela em coordenadas especificadas
  */
 void ssd_1306_draw_pixel(uint8_t x, uint8_t y, ssd_1306_color color){
+
     if(x >= SSD1306_WIDTH || y > SSD1306_HEIGHT)
         return;
     
@@ -426,6 +503,50 @@ void ssd_1306_draw_pixel(uint8_t x, uint8_t y, ssd_1306_color color){
         buffer[x + (y/8)*SSD1306_WIDTH] |= 1<<(y%8);
     else
         buffer[x+(y/8)*SSD1306_WIDTH] &= ~(1<<(y%8));
+}
+
+static float ssd_1306_deg_to_rad( float degree){
+
+    float _degree = (degree*(3.14f/180.0f));
+
+    return _degree;
+}
+
+static uint16_t ssd_1306_normalizacao(uint16_t degree){
+
+    uint16_t loc_angle = degree % 360;
+    return ((loc_angle == 0 && degree != 0) ? 360 : loc_angle);
+}
+
+/**
+ * @
+ */
+void ssd_1306_draw_arc(uint8_t x, uint8_t y, uint8_t radius, uint16_t start_angle, uint16_t sweep, ssd_1306_color color){
+
+    static const uint8_t CIRCLE_APPROXIMATION_SEGMENTS = 36;
+
+    uint32_t loc_start_angle, loc_sweep, approx_segments, count;
+    float approx_degree, rad;
+    int8_t xp1, xp2, yp1, yp2;
+
+    loc_start_angle = ssd_1306_normalizacao(start_angle);
+    loc_sweep = ssd_1306_normalizacao(sweep);
+
+    approx_segments = (loc_sweep * CIRCLE_APPROXIMATION_SEGMENTS) / 360;
+    approx_degree = loc_sweep / (float)approx_segments;
+
+    for (count = 0; count <= approx_segments; count++) {
+        rad = ssd_1306_deg_to_rad(loc_start_angle + count * approx_degree);
+        xp1 = x + (int8_t)(sinf(rad) * radius);
+        yp1 = y + (int8_t)(cosf(rad) * radius);
+
+        if (count > 0) {
+            ssd_1306_draw_line(xp2, yp2, xp1, yp1, color);
+        }
+
+        xp2 = xp1;
+        yp2 = yp1;
+    }
 }
 
 /**
@@ -438,8 +559,47 @@ void ssd_1306_draw_pixel(uint8_t x, uint8_t y, ssd_1306_color color){
  * @return void
  * @note Draw arc with radius line
  */
-void ssd1306_draw_arc_with_radius_line(uint8_t x, uint8_t y, uint8_t radius, uint16_t start_angle, uint16_t sweep, ssd_1306_color color){
-    return;
+void ssd_1306_draw_arc_with_radius_line(uint8_t x, uint8_t y, uint8_t radius, uint16_t start_angle, uint16_t sweep, ssd_1306_color color) {
+    
+    const uint32_t CIRCLE_APPROXIMATION_SEGMENTS = 36;
+    float approx_degree, rad;
+    uint32_t approx_segments, count, loc_sweep;
+    uint8_t xp1, xp2 = 0, yp1, yp2 = 0;
+
+    // Normaliza o ângulo de varredura
+    loc_sweep = ssd_1306_normalizacao(sweep);
+
+    // Calcula os segmentos aproximados e o grau de aproximação
+    approx_segments = (loc_sweep * CIRCLE_APPROXIMATION_SEGMENTS) / 360;
+    approx_degree = loc_sweep / (float)approx_segments;
+
+    // Inicializa o contador baseado no ângulo inicial normalizado
+    count = (ssd_1306_normalizacao(start_angle) * CIRCLE_APPROXIMATION_SEGMENTS) / 360;
+
+    // Calcula a primeira coordenada do arco
+    rad = ssd_1306_deg_to_rad(count * approx_degree);
+    uint8_t first_point_x = x + (int8_t)(sinf(rad) * radius);
+    uint8_t first_point_y = y + (int8_t)(cosf(rad) * radius);
+
+    // Desenha o arco
+    while (count < approx_segments) {
+        rad = ssd_1306_deg_to_rad(count * approx_degree);
+        xp1 = x + (int8_t)(sinf(rad) * radius);
+        yp1 = y + (int8_t)(cosf(rad) * radius);
+        count++;
+        if (count != approx_segments) {
+            rad = ssd_1306_deg_to_rad(count * approx_degree);
+        } else {
+            rad = ssd_1306_deg_to_rad(loc_sweep);
+        }
+        xp2 = x + (int8_t)(sinf(rad) * radius);
+        yp2 = y + (int8_t)(cosf(rad) * radius);
+        ssd_1306_draw_line(xp1, yp1, xp2, yp2, color);
+    }
+
+    // Desenha as linhas de raio
+    ssd_1306_draw_line(x, y, first_point_x, first_point_y, color);
+    ssd_1306_draw_line(x, y, xp2, yp2, color);
 }
 
 /**

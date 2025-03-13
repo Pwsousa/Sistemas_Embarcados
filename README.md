@@ -1,117 +1,177 @@
+# 📌 Utilização da Plataforma BitDogLab
+
+A **BitDogLab**, uma iniciativa do Projeto Escola 4.0 da Unicamp, é uma ferramenta educacional dedicada à eletrônica e computação. Baseada na **Raspberry Pi Pico H ou W**, permite aos usuários explorar, montar e programar utilizando componentes montados na sua placa e também externos conectados de forma organizada e segura. Selecionados meticulosamente, os componentes promovem um aprendizado "mão na massa", incentivando os usuários a aprimorar habilidades de programação e eletrônica de maneira sinérgica e progressiva.
+
+Um diferencial da **BitDogLab** é que seu projeto é totalmente aberto, permitindo que seja livremente copiada, fabricada, montada e melhorada pelos usuários.
+
+Mais informações em: [BitDogLab GitHub](https://github.com/Fruett/BitDogLab).
+
+## 📌 Conexões e Configurações de Hardware
+
+Na placa da **BitDogLab**, as conexões da **Raspberry Pi Pico** com outros componentes estão realizadas da seguinte forma:
+
+- **LED RGB (Cátodo comum)**:
+  - Vermelho no **GPIO 13** através de um resistor de **220Ω**.
+  - Verde no **GPIO 11** através de um resistor de **220Ω**.
+  - Azul no **GPIO 12** através de um resistor de **150Ω**.
+
+- **Botões**:
+  - **Botão A**: **GPIO 5**, com resistor de pull-up interno.
+  - **Botão B**: **GPIO 6**, com resistor de pull-up interno.
+  - **Botão RESET**: Conectado ao **RUN (pino 30)** da Raspberry Pi Pico.
+
+- **Buzzers**:
+  - **Buzzer A**: GPIO **21** (controlado por um transistor).
+  - **Buzzer B**: GPIO **10**.
+
+- **Matriz de LEDs RGB WS2812B (Neopixel)**:
+  - Conectada ao **GPIO 7**.
+  - Possui um conector para expansão de mais LEDs coloridos via jumper "Ext. RGB Neopixel" no verso da placa.
+
+- **Joystick Analógico KY-023**:
+  - **VRy**: **GPIO 26**.
+  - **VRx**: **GPIO 27**.
+  - **Botão SW**: **GPIO 22**, com resistor de pull-up interno.
+
+- **Display OLED 128x64 (I2C)**:
+  - **SDA**: **GPIO 14**.
+  - **SCL**: **GPIO 15**.
+  - Utiliza **I2C1** por padrão.
+  - Pode utilizar **SoftI2C** para comunicação mais robusta.
+  
+ 
+
+---
+
+# 📜 Índice
 - [Introdução](#-introdução)
 - [Motivo](#-motivo)
-- [Principais caracteristicas](#-principais--caracteristicas)
-- [Instalação](#-instalacao)
+- [Principais Características](#-principais-caracteristicas)
+- [Instalação](#-instalação)
 - [Quick Start](#-quick-start)
 - [Exemplos](#-exemplos)
-- [Documentacao](#-documentacao)
+- [Documentação](#-documentação)
 - [Contribuintes](#-contribuintes)
-
 
 ## 🌟 Introdução
 
-Os periféricos são componentes cruciais em sistemas embarcados, permitindo a interação entre o microcontrolador e o mundo externo. Eles incluem dispositivos como sensores, atuadores, displays entre outros. 
+Os periféricos são componentes cruciais em sistemas embarcados, permitindo a interação entre o microcontrolador e o mundo externo. Eles incluem dispositivos como sensores, atuadores e displays, entre outros.
 
 Esses componentes são responsáveis por coletar dados, processá-los e executar ações baseadas nas informações recebidas, tornando-os essenciais para o funcionamento eficaz e eficiente de sistemas embarcados.
 
-- **Principais pontos dos perifericos**:
-    - Coleta de dados
-    - Interface com o usuário
-    - Comunicação
-    - Controle
-    - Armazenamento
-    - Precisão e eficiência
+### Principais pontos dos periféricos:
+- Coleta de dados
+- Interface com o usuário
+- Comunicação
+- Controle
+- Armazenamento
+- Precisão e eficiência
 
 ### 🛠️ OLED SSD1306
 
-O display **OLED SSD1306** é amplamente utilizado em projetos de sistemas embarcardos por vários fatores como boa resolução e baixo conssumo de energia.
+O display **OLED SSD1306** é amplamente utilizado em projetos de sistemas embarcados devido à sua boa resolução e baixo consumo de energia.
 
-A biblioteca **ssd_1306** foi construida com o intuito de facilitar o uso do dispositivo *OLED SSD1306* contribuindo com a abertura de conhecimento e facilitando a sua integração com a *Raspberry Pi Pico W*. 
+A biblioteca **ssd_1306** foi construída para facilitar o uso do **OLED SSD1306**, promovendo conhecimento aberto e facilitando a sua integração com a **Raspberry Pi Pico W**.
 
-### 🛠️ Joystick 
+### 🛠️ Joystick
 
-Os **joysticks** é um dispositivos de entrada que permitem controlar o movimento em várias direções nos eixos x, y e z(rotação). Eles são amplamente utilizados em videogames, simuladores de voo e outros aplicativos onde é necessário um controle preciso e intuitivo, temos alguns tipos de **joystikcs** que pode ser utilizados segundo o criterio do projeto.
+Os **joysticks** são dispositivos de entrada que permitem controlar o movimento em várias direções nos eixos **X, Y e Z (rotação)**. São amplamente utilizados em videogames, simuladores de voo e outros aplicativos onde é necessário um controle preciso e intuitivo.
 
-A *Raspberry Pi Pico* suporta a linguagem *C* e a *MicroPython*, o presente código foi escrito em C utilizando o ambiente de desenvolvimento *Visual Studio Code* juntamente com a extensão *Raspberry Pi Pico* presente na ferramenta de desenvolvimento.
+A **Raspberry Pi Pico** suporta as linguagens **C** e **MicroPython**.
+O Joystick Analógico KY-023 permite o controle de movimentos nos eixos X e Y, além de possuir um botão de clique integrado.
+
+Conexões:
+
+VRx → GPIO 27 (Leitura do eixo X via ADC)
+
+VRy → GPIO 26 (Leitura do eixo Y via ADC)
+
+SW → GPIO 22 (Leitura do botão com pull-up interno)
+
+#### 🔧 Explicação da Implementação
+
+**Seleção do canal ADC para o eixo X (VRX)**
+```c
+adc_select_input(ADC_CHANNEL_0);
+```
+- O joystick possui dois potenciômetros internos, um para o eixo X (VRX) e outro para o eixo Y (VRY). Esses potenciômetros estão conectados aos pinos analógicos do Raspberry Pi Pico.
+- `ADC_CHANNEL_0` corresponde ao pino **JOYSTICK_VRX** (pino 26).
+- A função `adc_select_input()` configura o ADC para ler esse canal.
+
+**Leitura do valor do ADC**
+```c
+*vrx_value = adc_read();
+```
+- `adc_read()` retorna o valor digitalizado do sinal analógico no pino correspondente (0 a 4095, ADC de 12 bits).
+
+**Seleção do canal ADC para o eixo Y (VRY)**
+```c
+adc_select_input(ADC_CHANNEL_1);
+```
+- `ADC_CHANNEL_1` corresponde ao pino **JOYSTICK_VRY** (pino 27).
+- O ADC agora será configurado para ler o eixo Y.
+
+**Novo delay e leitura do ADC**
+```c
+sleep_us(2);
+*vry_value = adc_read();
+```
+- Pequeno delay de **2 microssegundos**.
+- O valor lido do eixo Y é armazenado na variável `vry_value`.
+
+
+adc_select_input(ADC_CHANNEL_0);
+O joystick possui dois potenciômetros internos, um para o eixo X (VRX) e outro para o eixo Y (VRY). Esses potenciômetros estão conectados aos pinos analógicos do Raspberry Pi Pico.
+
+ADC_CHANNEL_0 corresponde ao pino JOYSTICK_VRX (pino 26 no código).
+A função adc_select_input() configura o ADC para ler esse canal.
 
 ## 💡 Motivo
 
-- *Facilitar a integração dos perifericos com o microcontrolador*
-- *
+- Facilitar a integração dos periféricos com o microcontrolador.
 
-## ✨ Principais caracteristicas - OLED
+## ✨ Principais Características - OLED
 
 ### Inicialização
+- `ssd1306_Init()`: Cria a lista de comandos para inicialização do display.
 
--`ssd1306_Init()` : Cria a lista de comandos (com base nos endereços definidos em ssd1306_i2c.h) para a inicialização do display.
+### Controle do Display
+- `render_on_display()`: Atualiza uma parte do display com uma área de renderização.
+- `ssd1306_set_pixel()`: Determina o pixel a ser aceso no display.
 
-### Controle do display
+### Desenho de Formas
+- `ssd1306_draw_line()`: Desenha uma linha utilizando o algoritmo de Bresenham.
+- `ssd1306_draw_bitmap()`: Desenha um bitmap no display.
 
--`render_on_display()`: Atualiza uma parte do display com uma área de renderização.
-
--`ssd1306_set_pixel()`: Determina o pixel a ser aceso (no display) de acordo com a coordenada fornecida.
-
-### Desenho de formas 
-
--`ssd1306_draw_line()`: Com o algoritmo de Bresenham básico desenha uma linha.
-
--`ssd1306_draw_bitmap()`: Desenha o bitmap (a ser fornecido em display_oled.c) no display.
-
-### Envio e manipulação de textos
-
--`ssd1306_draw_char()`: Desenha um único caractere no display.
-
--`ssd1306_draw_string()`: Desenha uma string, chamando a função de desenhar 
-caractere várias vezes.
-
-### Manipulação do buffer
-
--`calculate_render_area_buffer_length()`: Calcular quanto do buffer será destinado à área de renderização.
-
-### Funções de baixo nível
-
--`ssd1306_send_command()`: Processo de escrita do i2c espera um byte de controle, seguido por dados.
-
--`ssd1306_config()`: Função de configuração do display para o caso do bitmap.
-
--`ssd1306_init_bm()`: Inicializa o display para o caso de exibição de bitmap.
-
--`ssd1306_send_command_list()`: Envia uma lista de comandos ao hardware.
-
--`ssd1306_send_buffer()`: Copia buffer de referência num novo buffer, a fim de adicionar o byte de controle desde o início.
-
--`ssd1306_scroll()`: Cria a lista de comandos para configurar o scrolling.
-
--`ssd1306_send_data()`: Envia os dados ao display.
+### Envio e Manipulação de Textos
+- `ssd1306_draw_char()`: Desenha um caractere no display.
+- `ssd1306_draw_string()`: Desenha uma string, chamando a função de desenhar caractere várias vezes.
 
 ## 🔧 Instalação
 
-Precisamos clonar o repositório para nosso ambiente de trabalho e em seguida verificar ou adicionar o caminho dos executaveis no arquivo **CMakeLists.txt** e posteriormente podemos trabalhar com a biblioteca tranquilamente.
+Para instalar e utilizar a biblioteca, siga os passos:
 
-- **Clonando o repositório**
-
-```bash 
-// Clonagem do repositório
-
-$ https://github.com/Pwsousa/Sistemas_Embarcados.git
-
-```
-- **Verificadndo/adicionando os executaveis no arquivo CMakeLists.txt**
-
-```bash 
-add_executable(
-    Sistemas_Embarcados 
-    display/ssd1306_i2c.c
-    display/ssd1306.c
-    Sistemas_Embarcados.c 
-)
-
-```
-Devemos verificar ainda a função `target_link_libraries()` pois ela é responsavel de especificar quais biliotecas irão ser utilizadas durante o processo de construção.
+- **Clonar o repositório:**
 
 ```bash
-Add any user requested libraries
-target_link_libraries(Sistemas_Embarcados 
+$ git clone https://github.com/Pwsousa/Sistemas_Embarcados.git
+```
+
+- **Adicionar os arquivos no CMakeLists.txt:**
+
+```bash
+add_executable(
+    Sistemas_Embarcados
+    display/ssd1306_i2c.c
+    display/ssd1306.c
+    Sistemas_Embarcados.c
+)
+```
+
+- **Verificar `target_link_libraries()`**:
+
+```bash
+target_link_libraries(Sistemas_Embarcados
     hardware_gpio
     hardware_adc
     hardware_pwm
@@ -119,27 +179,16 @@ target_link_libraries(Sistemas_Embarcados
     pico_stdlib
     hardware_timer
 )
-
 ```
-
 ## 🚀 Quick Start
-
-
 
 ## 📋 Exemplos
 
-
-
 ## 📚 Documentação
 
-Para maiores informações visite:
-
+Para mais informações, acesse:
 - [Datasheet OLED1306](https://www.digikey.com/htmldatasheets/production/2047793/0/0/1/ssd1306.html?msockid=0fc5c8f0897d6ddd09eedc37882a6c9c).
+- [Joystick Module](https://components101.com/modules/joystick-module).
 
--[Joystick Module](https://components101.com/modules/joystick-module).
-
-## 👥 Contribuintes e Agradecimentos
-
-
-
+## 👥 Contribuintes
 

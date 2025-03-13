@@ -20,7 +20,7 @@ Esses componentes são responsáveis por coletar dados, processá-los e executar
     - Comunicação
     - Controle
     - Armazenamento
-    - Precisão e Eficiência
+    - Precisão e eficiência
 
 ### 🛠️ OLED SSD1306
 
@@ -42,35 +42,39 @@ A *Raspberry Pi Pico* suporta a linguagem *C* e a *MicroPython*, o presente cód
 ## ✨ Principais caracteristicas - OLED
 
 ### Inicialização
+
 -`ssd1306_Init()` : Cria a lista de comandos (com base nos endereços definidos em ssd1306_i2c.h) para a inicialização do display.
 
 ### Controle do display
 
--`render_on_display()`: Atualiza uma parte do display com uma área de renderização
--`ssd1306_set_pixel()`: Determina o pixel a ser aceso (no display) de acordo com a coordenada fornecida
--` 
+-`render_on_display()`: Atualiza uma parte do display com uma área de renderização.
+
+-`ssd1306_set_pixel()`: Determina o pixel a ser aceso (no display) de acordo com a coordenada fornecida.
 
 ### Desenho de formas 
 
--`ssd1306_draw_line()`: Com o algoritmo de Bresenham básico desenha uma linha 
+-`ssd1306_draw_line()`: Com o algoritmo de Bresenham básico desenha uma linha.
+
 -`ssd1306_draw_bitmap()`: Desenha o bitmap (a ser fornecido em display_oled.c) no display.
 
 ### Envio e manipulação de textos
 
 -`ssd1306_draw_char()`: Desenha um único caractere no display.
--`ssd1306_draw_string()`:Desenha uma string, chamando a função de desenhar caractere várias vezes.
+
+-`ssd1306_draw_string()`:Desenha uma string, chamando a função de desenhar 
+caractere várias vezes.
 
 ### Manipulação do buffer
 
 -`calculate_render_area_buffer_length()`:Calcular quanto do buffer será destinado à área de renderização.
--`
 
 ### Funções de baixo nível
+
 -`ssd1306_send_command()`: Processo de escrita do i2c espera um byte de controle, seguido por dados.
 
--`ssd1306_config()`: Função de configuração do display para o caso do bitmap
+-`ssd1306_config()`: Função de configuração do display para o caso do bitmap.
 
--`ssd1306_init_bm()`: Inicializa o display para o caso de exibição de bitmap
+-`ssd1306_init_bm()`: Inicializa o display para o caso de exibição de bitmap.
 
 -`ssd1306_send_command_list()`: Envia uma lista de comandos ao hardware.
 
@@ -82,11 +86,50 @@ A *Raspberry Pi Pico* suporta a linguagem *C* e a *MicroPython*, o presente cód
 
 ## 🔧 Instalação
 
+Precisamos clonar o repositório para nosso ambiente de trabalho e em seguida verificar ou adicionar o caminho dos executaveis no arquivo **CMakeLists.txt** e posteriormente podemos trabalhar com a biblioteca tranquilamente.
+
+-**Clonando o repositório**
+
+```bash 
+// Clonagem do repositório
+
+$ https://github.com/Pwsousa/Sistemas_Embarcados.git
+
+```
+-**Verificadndo/adicionando os executaveis no arquivo CMakeLists.txt**
+
+```bash 
+add_executable(
+    Sistemas_Embarcados 
+    display/ssd1306_i2c.c
+    display/ssd1306.c
+    Sistemas_Embarcados.c 
+)
+
+```
+Devemos verificar ainda a função `target_link_libraries()` pois ela é responsavel de especificar quais biliotecas irão ser utilizadas durante o processo de construção.
+
+```bash
+Add any user requested libraries
+target_link_libraries(Sistemas_Embarcados 
+    hardware_gpio
+    hardware_adc
+    hardware_pwm
+    hardware_i2c
+    pico_stdlib
+    hardware_timer
+)
+
+```
+
 ## 🚀 Quick Start
 
 ## 📋 Exemplos
 
 ## 📚 Documentação
 
-## 👥 Contribuintes
+## 👥 Contribuintes e Agradecimentos
+
+
+
 

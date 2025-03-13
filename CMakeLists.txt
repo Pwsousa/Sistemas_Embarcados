@@ -66,7 +66,7 @@ target_link_libraries(Sistemas_Embarcados
         hardware_i2c
         pico_stdlib
         hardware_timer
-        )
+)
 
 pico_add_extra_outputs(Sistemas_Embarcados)
 

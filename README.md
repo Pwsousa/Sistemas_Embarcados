@@ -65,7 +65,7 @@ Na placa da **BitDogLab**, as conexões da **Raspberry Pi Pico** com outros comp
   - **SDA**: **GPIO 14**.
   - **SCL**: **GPIO 15**.
   - Utiliza **I2C1** por padrão.
-  - Pode utilizar **SoftI2C** para comunicação mais robusta.
+
   
 ---
 

@@ -1,6 +1,6 @@
 - [Introdução](#-introdução)
 - [Motivo](#-motivo)
-- [Principais caracteristicas](#-caracteristicas--capacidades)
+- [Principais caracteristicas](#-principais--caracteristicas)
 - [Instalação](#-instalacao)
 - [Quick Start](#-quick-start)
 - [Exemplos](#-exemplos)
@@ -61,12 +61,12 @@ A *Raspberry Pi Pico* suporta a linguagem *C* e a *MicroPython*, o presente cód
 
 -`ssd1306_draw_char()`: Desenha um único caractere no display.
 
--`ssd1306_draw_string()`:Desenha uma string, chamando a função de desenhar 
+-`ssd1306_draw_string()`: Desenha uma string, chamando a função de desenhar 
 caractere várias vezes.
 
 ### Manipulação do buffer
 
--`calculate_render_area_buffer_length()`:Calcular quanto do buffer será destinado à área de renderização.
+-`calculate_render_area_buffer_length()`: Calcular quanto do buffer será destinado à área de renderização.
 
 ### Funções de baixo nível
 

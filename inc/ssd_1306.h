@@ -1,7 +1,7 @@
 #ifndef SSD1306_H
 #define SSD1306_H
 
-/******************** includes  ********************/
+/******************** includes  *********************/
 #include <stddef.h>
 #include <stdint.h>
 #include <_ansi.h>

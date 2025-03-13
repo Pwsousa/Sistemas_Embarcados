@@ -40,6 +40,7 @@ ssd_1306_verti vert_[] = {
     {40, 40}
 };
 
+
 void testa_tudo(void){
     /************************** Desenhando retangulo *************************/
     ssd_1306_fill(black);

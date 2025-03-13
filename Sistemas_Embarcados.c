@@ -4,15 +4,14 @@
 #include <ctype.h>
 #include "pico/stdlib.h"
 #include "pico/binary_info.h"
-#include "display/ssd1306_i2c.h"
+#include "display/inc/ssd1306_i2c.h"
 #include "hardware/i2c.h"
 
 const uint I2C_SDA = 14;
 const uint I2C_SCL = 15;
 
 
-int main()
-{
+int main(){
     stdio_init_all();   // Inicializa os tipos stdio padrão presentes ligados ao binário
 
     // Inicialização do i2c

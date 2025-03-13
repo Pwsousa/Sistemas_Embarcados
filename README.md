@@ -88,7 +88,7 @@ caractere várias vezes.
 
 Precisamos clonar o repositório para nosso ambiente de trabalho e em seguida verificar ou adicionar o caminho dos executaveis no arquivo **CMakeLists.txt** e posteriormente podemos trabalhar com a biblioteca tranquilamente.
 
--**Clonando o repositório**
+- **Clonando o repositório**
 
 ```bash 
 // Clonagem do repositório
@@ -96,7 +96,7 @@ Precisamos clonar o repositório para nosso ambiente de trabalho e em seguida ve
 $ https://github.com/Pwsousa/Sistemas_Embarcados.git
 
 ```
--**Verificadndo/adicionando os executaveis no arquivo CMakeLists.txt**
+- **Verificadndo/adicionando os executaveis no arquivo CMakeLists.txt**
 
 ```bash 
 add_executable(
@@ -124,9 +124,19 @@ target_link_libraries(Sistemas_Embarcados
 
 ## 🚀 Quick Start
 
+
+
 ## 📋 Exemplos
 
+
+
 ## 📚 Documentação
+
+Para maiores informações visite:
+
+- [Datasheet OLED1306](https://www.digikey.com/htmldatasheets/production/2047793/0/0/1/ssd1306.html?msockid=0fc5c8f0897d6ddd09eedc37882a6c9c).
+
+-[Joystick Module](https://components101.com/modules/joystick-module).
 
 ## 👥 Contribuintes e Agradecimentos
 

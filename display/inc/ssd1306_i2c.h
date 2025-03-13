@@ -84,4 +84,6 @@ void ssd1306_init_bm(ssd1306_t *ssd, uint8_t width, uint8_t height, bool externa
 void ssd1306_send_data(ssd1306_t *ssd);
 void ssd1306_draw_bitmap(ssd1306_t *ssd, const uint8_t *bitmap);
 
+
+
 #endif

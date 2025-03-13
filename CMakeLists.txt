@@ -37,8 +37,8 @@ pico_sdk_init()
 
 add_executable(
     Sistemas_Embarcados 
-    display/ssd1306_i2c.c
-    display/ssd1306.c
+    display/src/ssd1306_i2c.c
+    display/src/ssd1306.c
     Sistemas_Embarcados.c 
 )
 
@@ -54,8 +54,9 @@ target_link_libraries(Sistemas_Embarcados
         pico_stdlib)
 
 # Add the standard include files to the build
-target_include_directories(Sistemas_Embarcados PRIVATE
-        ${CMAKE_CURRENT_LIST_DIR}
+target_include_directories(
+    Sistemas_Embarcados PRIVATE inc
+    display/inc
 )
 
 # Add any user requested libraries

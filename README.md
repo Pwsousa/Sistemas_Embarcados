@@ -1,5 +1,33 @@
 # 📌 Utilização da Plataforma BitDogLab
 
+---
+
+## 📜 Índice
+
+- [Introdução](#-introdução)
+- [Conexões e Configurações de Hardware](#-conexões-e-configurações-de-hardware)
+- [Motivo](#-motivo)
+- [Principais Características](#-principais-características---oled)
+- [Instalação](#-instalação)
+- [Quick Start](#-quick-start)
+- [Alguns exemplos](#-alguns-exemplos)
+- [Documentação](#-documentação)
+
+
+## 🌟 Introdução
+
+Os periféricos são componentes cruciais em sistemas embarcados, permitindo a interação entre o microcontrolador e o mundo externo. Eles incluem dispositivos como sensores, atuadores e displays.
+Esses componentes são responsáveis por coletar dados, processá-los e executar ações baseadas nas informações recebidas, tornando-os essenciais para o funcionamento eficaz e eficiente de sistemas embarcados.
+
+#### Principais pontos dos periféricos:
+
+  - *Coleta de dados*
+  - *Interface com o usuário*
+  - *Comunicação*
+  - *Controle*
+  - *Armazenamento*
+  - *Precisão e eficiência*
+
 A **BitDogLab**, uma iniciativa do Projeto Escola 4.0 da Unicamp, é uma ferramenta educacional dedicada à eletrônica e computação. Baseada na **Raspberry Pi Pico H ou W**, permite aos usuários explorar, montar e programar utilizando componentes montados na sua placa e também externos conectados de forma organizada e segura. Selecionados meticulosamente, os componentes promovem um aprendizado "mão na massa", incentivando os usuários a aprimorar habilidades de programação e eletrônica de maneira sinérgica e progressiva.
 
 Um diferencial da **BitDogLab** é que seu projeto é totalmente aberto, permitindo que seja livremente copiada, fabricada, montada e melhorada pelos usuários.
@@ -39,33 +67,7 @@ Na placa da **BitDogLab**, as conexões da **Raspberry Pi Pico** com outros comp
   - Utiliza **I2C1** por padrão.
   - Pode utilizar **SoftI2C** para comunicação mais robusta.
   
- 
-
 ---
-
-# 📜 Índice
-- [Introdução](#-introdução)
-- [Motivo](#-motivo)
-- [Principais Características](#-principais-caracteristicas)
-- [Instalação](#-instalação)
-- [Quick Start](#-quick-start)
-- [Exemplos](#-exemplos)
-- [Documentação](#-documentação)
-- [Contribuintes](#-contribuintes)
-
-## 🌟 Introdução
-
-Os periféricos são componentes cruciais em sistemas embarcados, permitindo a interação entre o microcontrolador e o mundo externo. Eles incluem dispositivos como sensores, atuadores e displays, entre outros.
-
-Esses componentes são responsáveis por coletar dados, processá-los e executar ações baseadas nas informações recebidas, tornando-os essenciais para o funcionamento eficaz e eficiente de sistemas embarcados.
-
-### Principais pontos dos periféricos:
-- Coleta de dados
-- Interface com o usuário
-- Comunicação
-- Controle
-- Armazenamento
-- Precisão e eficiência
 
 ### 🛠️ OLED SSD1306
 
@@ -126,26 +128,34 @@ O joystick possui dois potenciômetros internos, um para o eixo X (VRX) e outro 
 ADC_CHANNEL_0 corresponde ao pino JOYSTICK_VRX (pino 26 no código).
 A função adc_select_input() configura o ADC para ler esse canal.
 
+---
+
 ## 💡 Motivo
 
 - Facilitar a integração dos periféricos com o microcontrolador.
 
-## ✨ Principais Características - OLED
+---
+
+### ✨ Principais Características - OLED
 
 ### Inicialização
-- `ssd1306_Init()`: Cria a lista de comandos para inicialização do display.
+- `ssd_1306_init()`: Cria a lista de comandos para inicialização do display.
+- `ssd_1306_up_date_screen()`: Habilita os conteudos do buffer a subir e aparece na tela.
 
 ### Controle do Display
 - `render_on_display()`: Atualiza uma parte do display com uma área de renderização.
-- `ssd1306_set_pixel()`: Determina o pixel a ser aceso no display.
 
 ### Desenho de Formas
-- `ssd1306_draw_line()`: Desenha uma linha utilizando o algoritmo de Bresenham.
-- `ssd1306_draw_bitmap()`: Desenha um bitmap no display.
+- `ssd_1306_draw_pixel()`: Determina o pixel a ser aceso no display.
+- `ssd_1306_draw_line()`: Desenha uma linha utilizando o algoritmo de Bresenham.
+- `ssd_1306_draw_rectangle()`: Desenha um retângulo baseado nas coordenadas informadas
+- `ssd_1306_draw_bitmap()`: Desenha um bitmap no display.
 
 ### Envio e Manipulação de Textos
-- `ssd1306_draw_char()`: Desenha um caractere no display.
-- `ssd1306_draw_string()`: Desenha uma string, chamando a função de desenhar caractere várias vezes.
+- `ssd_1306_write_char()`: Desenha um caractere no display.
+- `ssd_1306_write_string()`: Desenha uma string, chamando a função de desenhar caractere várias vezes.
+
+---
 
 ## 🔧 Instalação
 
@@ -182,7 +192,100 @@ target_link_libraries(Sistemas_Embarcados
 ```
 ## 🚀 Quick Start
 
-## 📋 Exemplos
+Vamos escrever um "Ola mundo" na tela do eled, para isso vamos seguir os seguintes passos:
+
+- Chamar a função ```ssd_1306_init()``` para inicializart o **OLED** 
+- Chamar a função ```ssd_1306_fill()``` e escolher a cor ``black`` ou ``white``
+- Desenhar um quadrado no **OlED** que nesse caso vai de 0-0-127-63 com a cor ``white``
+- Setar o curssor para uma posição desejada - 20 - 30
+- Escrever na tela a mensagem **Ola mundo** esscolhendo a fonte e a cor 
+- Fazer o up date da tela usando a função ```ssd_1306_up_date_screen()```
+- Dar um pequeno delay de *500ms*
+- Desligar a tela de pois do delay usando a função ```ssd_1306_set_display_on_off()``` passando o valor zero para desligar o **OLED**
+- Dentro do loop ``for`` nã oiremos fazer nada.
+
+```bash
+
+int main(){
+
+    stdio_init_all();
+
+    ssd_1306_init();
+    ssd_1306_fill(black);
+    ssd_1306_draw_rectangle(0, 0, 127, 63, white);
+    ssd_1306_set_cursor(20, 30);
+    ssd_1306_write_string("Deus e bom", Font_7x10, white);
+    ssd_1306_up_date_screen();
+    sleep_ms(500);
+    ssd_1306_fill(black);
+    ssd_1306_up_date_screen();
+    ssd_1306_set_display_on_off(0);
+
+    for(;;){
+
+    }
+
+```
+
+---
+
+## 📋 Alguns Exemplos
+
+- Desenho de uma polilyne 
+
+``` bash
+
+ssd_1306_verti vert_[] = {
+    {10, 10},
+    {20, 20},
+    {30, 30},
+    {40, 40}
+};
+
+int main(){
+  stdio_init_all();
+
+  ssd_1306_init();
+  /************************** Desenhando polylinha *************************/
+  ssd_1306_fill(black);
+  ssd_1306_draw_polyline(vert_, 10, white);
+  ssd_1306_up_date_screen();
+  sleep_ms(2000);
+
+  while(true){
+
+  }
+}
+
+```
+
+- Desemho utilizando pixel a pixel
+
+```bash 
+int main(){
+
+  // Testando o desenho pixel a pixel
+  // testando linhas 
+  for(int i = 0; i<123; i++){
+    ssd_1306_draw_pixel(i, 10, white);
+      ssd_1306_set_cursor(10, 10);
+      ssd_1306_up_date_screen();
+      sleep_ms(50);
+  }
+  // Testatndo as colunas 
+  for(int i = 0; i<63; i++){
+    ssd_1306_draw_pixel(10, i, white);
+    ssd_1306_set_cursor(10, 10);
+    ssd_1306_up_date_screen();
+     sleep_ms(50);
+  }
+
+  while(true){
+
+  }
+}
+
+```
 
 ## 📚 Documentação
 
@@ -190,5 +293,9 @@ Para mais informações, acesse:
 - [Datasheet OLED1306](https://www.digikey.com/htmldatasheets/production/2047793/0/0/1/ssd1306.html?msockid=0fc5c8f0897d6ddd09eedc37882a6c9c).
 - [Joystick Module](https://components101.com/modules/joystick-module).
 
+
+---
+
 ## 👥 Contribuintes
+
 

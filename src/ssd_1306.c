@@ -10,18 +10,13 @@
 
 #include "ssd_1306.h"
 
-/************************* variaveis *************************/
-static uint8_t buffer[SSD1306_BUFFER_SIZE];
-static ssd_1306_t ssd_1306;
-/************************* Funcoes *************************/
+#if defined(SSD1306_USE_I2C)
 
-/**
- * @
- */
+#define I2C_SDA_PIN 14
+#define I2C_SCL_PIN 15 
+
 void ssd_1306_reset(void){
     /*do nothing*/
-
-
 }
 
 /**
@@ -55,16 +50,23 @@ void ssd_1306_write_data(uint8_t *buff, size_t buff_size){
    
 }
 
+#endif
+
+/************************* variaveis *************************/
+static uint8_t buffer_ssd_1306[SSD1306_BUFFER_SIZE];
+static ssd_1306_t ssd_1306;
+/************************* Funcoes *************************/
+
 /**
  * @param buff 
  * @param _len
  * @return Retorna Ok ou ERROR 
  * @note
  */
-ssd_1306_erro ssd_1306_fill_buffer(uint8_t *buff, uint8_t _len){
+ssd_1306_erro ssd_1306_fill_buffer(uint8_t *buff, uint32_t _len){
     
     if(_len <= SSD1306_BUFFER_SIZE){
-        memcpy(buffer, buff, _len);
+        memcpy(buffer_ssd_1306, buff, _len);
         return OK;
     }
     return ERROR;
@@ -190,7 +192,7 @@ void ssd_1306_init(void){
  */
 void ssd_1306_fill(ssd_1306_color color){
 
-    memset(buffer, (color == black) ? 0x00: 0xFF, sizeof(buffer));
+    memset(buffer_ssd_1306, (color == black) ? 0x00: 0xFF, sizeof(buffer_ssd_1306));
 }
 
 /**
@@ -217,6 +219,7 @@ void ssd_1306_up_date_screen(void){
         ssd_1306_write_command(0xB0 + i);
         ssd_1306_write_command(0x00 + SSD1306_X_OFFSET_LOWER);
         ssd_1306_write_command(0x10 + SSD1306_X_OFFSET_UPPER);
+        ssd_1306_write_data(&buffer_ssd_1306[SSD1306_WIDTH*i], SSD1306_WIDTH);
     }
 }
 
@@ -225,7 +228,7 @@ void ssd_1306_up_date_screen(void){
  * @return void
  * @
  */
-void ssd_1306_set_display_on_off(bool on){
+void ssd_1306_set_display_on_off(const uint8_t on){
     if(on){
         ssd_1306.display_on = 1;
         ssd_1306_write_command(0xAF); //display on
@@ -245,7 +248,8 @@ void ssd_1306_set_display_on_off(bool on){
  * @return void
  * @paragraph Essa funcao e para desenhar um bitmap
  */
-void ssd_1306_draw_bitmap(uint8_t x, uint8_t y, const char *bitmap, uint8_t w, uint8_t h, ssd_1306_color color){
+void ssd_1306_draw_bitmap(uint8_t x, uint8_t y, const unsigned char *bitmap, uint8_t w, uint8_t h, ssd_1306_color color){
+    
     if(x >= SSD1306_WIDTH || y >= SSD1306_HEIGHT)
         return;
     
@@ -283,7 +287,7 @@ void ssd_1306_set_contrast(uint8_t value){
  *@return void
  *@note
  */
-void ssd_1306_draw_polyline(ssd_1306_verti *verte, uint16_t size, ssd_1306_color color){
+void ssd_1306_draw_polyline(const ssd_1306_verti *verte, uint16_t size, ssd_1306_color color){
 
     if(verte == NULL)
         return;
@@ -305,13 +309,13 @@ void ssd_1306_draw_polyline(ssd_1306_verti *verte, uint16_t size, ssd_1306_color
  */
 void ssd_1306_draw_line(uint8_t x_1, uint8_t y_1, uint8_t x_0, uint8_t y_0, ssd_1306_color color){
     
-    int delt_x = abs(x_1 - x_0);
-    int delt_y = abs(y_1 - y_0);
+    int32_t delt_x = abs(x_1 - x_0);
+    int32_t delt_y = abs(y_1 - y_0);
 
-    int sign_x;
-    int sign_y;
-    int erro_1;
-    int erro_2;
+    int32_t sign_x;
+    int32_t sign_y;
+    int32_t erro_1;
+    int32_t erro_2;
 
     if(x_0 < x_1)
         sign_x = 1;
@@ -382,22 +386,22 @@ ssd_1306_erro ssd_1306_inverte_retangulo(uint8_t x_0, uint8_t y_0, uint8_t x_1, 
       for (uint32_t x = x_0; x <= x_1; x++) {
         // Inverte bits na linha inicial parcial
         i = x + (y_0 / 8) * SSD1306_WIDTH;
-        buffer[i] ^= 0xFF << (y_0 % 8);
+        buffer_ssd_1306[i] ^= 0xFF << (y_0 % 8);
         i += SSD1306_WIDTH;
   
         // Inverte bits nas linhas intermediárias completas
         for (; i < x + (y_1 / 8) * SSD1306_WIDTH; i += SSD1306_WIDTH)
-            buffer[i] ^= 0xFF;
+            buffer_ssd_1306[i] ^= 0xFF;
         
         // Inverte bits na linha final parcial
-        buffer[i] ^= 0xFF >> (7 - (y_1 % 8));
+        buffer_ssd_1306[i] ^= 0xFF >> (7 - (y_1 % 8));
       }
 
     } else {
       // Se o retângulo está em uma única linha de 8 pixels
       const uint8_t mask = (0xFF << (y_0 % 8)) & (0xFF >> (7 - (y_1 % 8)));
       for (i = x_0 + (y_0 / 8) * SSD1306_WIDTH; i <= (uint32_t)x_1 + (y_1 / 8) * SSD1306_WIDTH; i++) {
-        buffer[i] ^= mask;
+        buffer_ssd_1306[i] ^= mask;
       }
     }
     return OK;
@@ -450,12 +454,12 @@ void ssd_1306_set_cursor(uint8_t x, uint8_t y){
  * @note
  */
 char ssd_1306_write_string(char *str, ssd_1306_font font, ssd_1306_color color){
+    
     while(*str){
         if(ssd_1306_write_char(*str, font, color) != *str)
             return *str;
         str++;
     }
-
     return *str;
 }
 
@@ -467,15 +471,18 @@ char ssd_1306_write_string(char *str, ssd_1306_font font, ssd_1306_color color){
  * @note 
  */
 char ssd_1306_write_char(char _char_, ssd_1306_font font, ssd_1306_color color){
+   
     if(_char_ < 32 || _char_ > 126)
         return 0;
+
     if(SSD1306_WIDTH < (ssd_1306.corde_x + font.width) || SSD1306_HEIGHT < (ssd_1306.corde_y + font.height))
         return 0;
     
-    for(int i = 0; i < font.height; i++){
-        int _dado_ = font.data[(_char_ - 32)*font.height + i];
-        for(int j = 0; j < font.width; j++){
-            if((_dado_ << j) & 0x8)
+    int i, _dado_, j;
+    for(i = 0; i < font.height; i++){
+        _dado_ = font.data[(_char_ - 32)*font.height + i];
+        for(j = 0; j < font.width; j++){
+            if((_dado_ << j) & 0x8000)
                 ssd_1306_draw_pixel(ssd_1306.corde_x + j, (ssd_1306.corde_y + i), (ssd_1306_color)color);
             else 
                 ssd_1306_draw_pixel(ssd_1306.corde_x + j, (ssd_1306.corde_y + i), (ssd_1306_color)!color);
@@ -500,9 +507,9 @@ void ssd_1306_draw_pixel(uint8_t x, uint8_t y, ssd_1306_color color){
     
     // se color == white
     if(color != black)
-        buffer[x + (y/8)*SSD1306_WIDTH] |= 1<<(y%8);
+        buffer_ssd_1306[x + (y/8)*SSD1306_WIDTH] |= 1<<(y%8);
     else
-        buffer[x+(y/8)*SSD1306_WIDTH] &= ~(1<<(y%8));
+        buffer_ssd_1306[x+(y/8)*SSD1306_WIDTH] &= ~(1<<(y%8));
 }
 
 static float ssd_1306_deg_to_rad( float degree){
@@ -528,25 +535,28 @@ void ssd_1306_draw_arc(uint8_t x, uint8_t y, uint8_t radius, uint16_t start_angl
     uint32_t loc_start_angle, loc_sweep, approx_segments, count;
     float approx_degree, rad;
     int8_t xp1, xp2, yp1, yp2;
-
-    loc_start_angle = ssd_1306_normalizacao(start_angle);
+    
     loc_sweep = ssd_1306_normalizacao(sweep);
 
+    count = (ssd_1306_normalizacao(start_angle) * CIRCLE_APPROXIMATION_SEGMENTS) / 360;
     approx_segments = (loc_sweep * CIRCLE_APPROXIMATION_SEGMENTS) / 360;
     approx_degree = loc_sweep / (float)approx_segments;
-
-    for (count = 0; count <= approx_segments; count++) {
-        rad = ssd_1306_deg_to_rad(loc_start_angle + count * approx_degree);
-        xp1 = x + (int8_t)(sinf(rad) * radius);
-        yp1 = y + (int8_t)(cosf(rad) * radius);
-
-        if (count > 0) {
-            ssd_1306_draw_line(xp2, yp2, xp1, yp1, color);
+    while(count < approx_segments)
+    {
+        rad = ssd_1306_deg_to_rad(count*approx_degree);
+        xp1 = x + (int8_t)(sinf(rad)*radius);
+        yp1 = y + (int8_t)(cosf(rad)*radius);    
+        count++;
+        if(count != approx_segments) {
+            rad = ssd_1306_deg_to_rad(count*approx_degree);
+        } else {
+            rad = ssd_1306_deg_to_rad(loc_sweep);
         }
-
-        xp2 = xp1;
-        yp2 = yp1;
+        xp2 = x + (int8_t)(sinf(rad)*radius);
+        yp2 = y + (int8_t)(cosf(rad)*radius);    
+        ssd_1306_draw_line(xp1,yp1,xp2,yp2,color);
     }
+    return;
 }
 
 /**
@@ -613,6 +623,7 @@ void ssd_1306_draw_arc_with_radius_line(uint8_t x, uint8_t y, uint8_t radius, ui
  * @note Draw circle by Bresenhem's algorithm
  */
 void ssd_1306_draw_circle(uint8_t cord_x, uint8_t cord_y, uint8_t par_r, ssd_1306_color color){
+    
     if(cord_y >= SSD1306_HEIGHT || cord_x >= SSD1306_WIDTH)
         return;
 

@@ -918,5 +918,5 @@ const ssd_1306_font Font_16x24 = {16, 24, Font16x24, NULL};
  * @copyright Google https://github.com/googlefonts/roboto
  * @license This font is licensed under the Apache License, Version 2.0.
 */
-const ssd_1306_font Font_16x15 = {16, 15, Font16x15, char_width};
+const ssd_1306_font Font_16x15 = {16, 15, Font16x15};
 #endif

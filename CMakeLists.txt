@@ -37,8 +37,14 @@ pico_sdk_init()
 
 add_executable(
     Sistemas_Embarcados 
+
     display/src/ssd1306_i2c.c
     display/src/ssd1306.c
+    joystick/src/joystick.c
+    example/gpio_tst.c
+    example/pwm.c
+    example/timer.c
+
     Sistemas_Embarcados.c 
 )
 
@@ -56,7 +62,9 @@ target_link_libraries(Sistemas_Embarcados
 # Add the standard include files to the build
 target_include_directories(
     Sistemas_Embarcados PRIVATE inc
+
     display/inc
+    joystick/inc
 )
 
 # Add any user requested libraries

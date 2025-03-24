@@ -1,6 +1,6 @@
 - [Introdução](#-introdução)
 - [Motivo](#-motivo)
-- [Principais caracteristicas](#-principais--caracteristicas)
+- [Principais caracteristicas](#-principais-caracteristicas)
 - [Instalação](#-instalacao)
 - [Quick Start](#-quick-start)
 - [Exemplos](#-exemplos)

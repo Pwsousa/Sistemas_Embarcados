@@ -299,5 +299,5 @@ Para mais informações, acesse:
 
 ## 👥 Contribuintes
 
-### * Lucas Guilherme *
-### * Pedro Wilson *
+### *Lucas Guilherme*
+### *Pedro Wilson*

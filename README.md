@@ -1,5 +1,7 @@
 # 📌 Utilização da Plataforma BitDogLab
 
+![](/img/virtus-cc.png)
+
 ---
 
 ## 📜 Índice

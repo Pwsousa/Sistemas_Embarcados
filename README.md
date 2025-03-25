@@ -1,6 +1,10 @@
 # 📌 Utilização da Plataforma BitDogLab
 
+<center>
+
 ![](/img/virtus-cc.png)
+
+</center>
 
 ---
 

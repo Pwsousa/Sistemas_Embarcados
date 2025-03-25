@@ -148,13 +148,16 @@ A função adc_select_input() configura o ADC para ler esse canal.
 - `ssd_1306_up_date_screen()`: Habilita os conteudos do buffer a subir e aparece na tela.
 
 ### Controle do Display
-- `render_on_display()`: Atualiza uma parte do display com uma área de renderização.
+
+- `ssd_1306_set_cursor()`: Posiciona o curssor do oled em um par de coordenadas.
 
 ### Desenho de Formas
 - `ssd_1306_draw_pixel()`: Determina o pixel a ser aceso no display.
 - `ssd_1306_draw_line()`: Desenha uma linha utilizando o algoritmo de Bresenham.
 - `ssd_1306_draw_rectangle()`: Desenha um retângulo baseado nas coordenadas informadas
 - `ssd_1306_draw_bitmap()`: Desenha um bitmap no display.
+- `ssd_1306_draw_circle()`: Desenha um circulo baseado no raio e nas coordenadas.
+- `ssd_1306_draw_arc()`: Desenha um arco
 
 ### Envio e Manipulação de Textos
 - `ssd_1306_write_char()`: Desenha um caractere no display.
@@ -219,7 +222,7 @@ int main(){
     ssd_1306_fill(black);
     ssd_1306_draw_rectangle(0, 0, 127, 63, white);
     ssd_1306_set_cursor(20, 30);
-    ssd_1306_write_string("Deus e bom", Font_7x10, white);
+    ssd_1306_write_string("Ola mundo", Font_7x10, white);
     ssd_1306_up_date_screen();
     sleep_ms(500);
     ssd_1306_fill(black);
@@ -227,7 +230,7 @@ int main(){
     ssd_1306_set_display_on_off(0);
 
     for(;;){
-
+      
     }
 }
 

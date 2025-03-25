@@ -45,6 +45,8 @@
         "binary_info.h": "c",
         "i2c.h": "c",
         "ssd1306.h": "c",
-        "ssd1306_i2c.h": "c"
+        "ssd1306_i2c.h": "c",
+        "ssd_1306.h": "c",
+        "ssd_1306_font.h": "c"
     }
 }

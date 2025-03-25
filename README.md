@@ -70,7 +70,6 @@ Na placa da **BitDogLab**, as conexões da **Raspberry Pi Pico** com outros comp
   - **SCL**: **GPIO 15**.
   - Utiliza **I2C1** por padrão.
 
-  
 ---
 
 ### 🛠️ OLED SSD1306
@@ -300,7 +299,6 @@ int main(){
 Para mais informações, acesse:
 - [Datasheet OLED1306](https://www.digikey.com/htmldatasheets/production/2047793/0/0/1/ssd1306.html?msockid=0fc5c8f0897d6ddd09eedc37882a6c9c).
 - [Joystick Module](https://components101.com/modules/joystick-module).
-
 
 ---
 

@@ -4,11 +4,7 @@
 
 ---
 
-<center>
-
 # 📌 Utilização da Plataforma BitDogLab
-
-</center>
 
 ---
 

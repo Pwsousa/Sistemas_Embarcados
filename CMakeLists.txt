@@ -43,6 +43,8 @@ add_executable(
     
     joystick/src/joystick.c
 
+    example/snake_game/src/snake_game.c
+
     Sistemas_Embarcados.c 
 )
 
